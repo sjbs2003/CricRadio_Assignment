@@ -1,0 +1,9 @@
+package org.sj.cricradio
+
+class Greeting {
+    private val platform = getPlatform()
+
+    fun greet(): String {
+        return "Hello, ${platform.name}!"
+    }
+}
