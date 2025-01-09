@@ -6,6 +6,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.sj.cricradio.Network.networkModule
 import org.sj.cricradio.data.repository.repositoryModule
+import org.sj.cricradio.presentation.viewmodelModule
 
 class CricRadioApplication: Application() {
 
@@ -18,7 +19,8 @@ class CricRadioApplication: Application() {
             modules(
                 listOf(
                     networkModule,
-                    repositoryModule
+                    repositoryModule,
+                    viewmodelModule
                 )
             )
         }
