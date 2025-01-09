@@ -16,8 +16,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 import org.sj.cricradio.data.remote.ApiService
-import org.sj.cricradio.data.repository.MatchRepoImpl
-import org.sj.cricradio.data.repository.MatchRepository
 
 val networkModule = module {
     single { createJson() }
