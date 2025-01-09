@@ -25,6 +25,18 @@ kotlin {
 
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+
+            implementation("io.ktor:ktor-client-android:2.3.7")
+            implementation("io.ktor:ktor-client-core:2.3.7")
+            implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+            implementation("io.ktor:ktor-client-logging:2.3.7")
+            implementation("io.ktor:ktor-client-websockets:2.3.7")
+
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+            implementation("io.insert-koin:koin-android:3.5.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)

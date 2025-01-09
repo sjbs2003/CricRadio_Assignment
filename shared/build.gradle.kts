@@ -38,6 +38,7 @@ kotlin {
             implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
             implementation("io.ktor:ktor-client-websockets:2.3.7")
+            implementation("io.ktor:ktor-client-logging:2.3.7")
 
             // Coroutines
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -50,6 +51,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation("io.ktor:ktor-client-android:2.3.7")
+            implementation("io.insert-koin:koin-android:3.5.0")
         }
     }
 }
