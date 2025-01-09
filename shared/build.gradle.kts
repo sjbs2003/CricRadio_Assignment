@@ -39,6 +39,7 @@ kotlin {
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
             implementation("io.ktor:ktor-client-websockets:2.3.7")
             implementation("io.ktor:ktor-client-logging:2.3.7")
+            implementation("io.ktor:ktor-client-cio:2.3.7")
 
             // Coroutines
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
