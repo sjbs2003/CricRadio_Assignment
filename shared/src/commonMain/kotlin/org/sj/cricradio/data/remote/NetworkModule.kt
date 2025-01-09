@@ -1,7 +1,7 @@
-package org.sj.cricradio.Network
+package org.sj.cricradio.data.remote
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -15,7 +15,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
-import org.sj.cricradio.data.remote.ApiService
 
 val networkModule = module {
     single { createJson() }
@@ -29,7 +28,7 @@ fun createJson() = Json {
     ignoreUnknownKeys = true
 }
 
-fun createHttpClient(json: Json) = HttpClient(Android) {
+fun createHttpClient(json: Json) = HttpClient(CIO) {
     install(ContentNegotiation) {
         json(json)
     }
