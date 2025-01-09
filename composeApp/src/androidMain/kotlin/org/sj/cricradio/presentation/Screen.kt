@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,11 +21,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
 import org.sj.cricradio.data.model.MiniMatchCardResponse
+import org.sj.cricradio.data.model.VenueInfo
 import org.sj.cricradio.data.model.VenueInfoResponse
 
 
@@ -66,6 +75,9 @@ fun MatchContent(
     ) {
         // MiniScoreCard
         MiniScoreCard(miniMatchCard)
+
+        // Venue Image
+        VenueImage(venueInfo)
     }
 }
 
@@ -157,7 +169,86 @@ fun MiniScoreCard(
 }
 
 @Composable
-private fun LoadingScreen() {
+fun VenueImage(
+    venueInfo: VenueInfoResponse?,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(8.dp),
+        contentColor = Color(0xFF1E1E1E)
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(8.dp))
+        ) {
+            val imageUrl = venueInfo?.responseData?.result?.venueDetails?.photo
+
+            if (imageUrl != null) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Venue Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier.fillMaxSize()
+                ) {
+                    when(painter.state) {
+                        is AsyncImagePainter.State.Loading -> {
+                            Box(
+                                modifier = modifier
+                                    .fillMaxSize()
+                                    .background(Color(0xFF0A1929)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(0xFF2196F3)
+                                )
+                            }
+                        }
+                        is AsyncImagePainter.State.Error -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color(0xFF0A1929)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Failed to load image",
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+                        else -> {
+                            SubcomposeAsyncImageContent()
+                        }
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF0A1929)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No venue image available",
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun LoadingScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -167,7 +258,7 @@ private fun LoadingScreen() {
 }
 
 @Composable
-private fun ErrorScreen(
+fun ErrorScreen(
     message: String,
     onRetry: () -> Unit
 ) {
