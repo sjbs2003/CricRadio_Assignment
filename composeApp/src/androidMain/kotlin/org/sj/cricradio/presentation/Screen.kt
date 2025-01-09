@@ -78,6 +78,9 @@ fun MatchContent(
 
         // Venue Image
         VenueImage(venueInfo)
+
+        //  Match Info
+        MatchInfo(venueInfo)
     }
 }
 
@@ -246,6 +249,36 @@ fun VenueImage(
     }
 }
 
+@Composable
+fun MatchInfo(
+    venueInfo: VenueInfoResponse?,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = venueInfo?.responseData?.result?.venueDetails?.knownAs ?: "",
+            color = Color(0xFF2196F3),
+            fontSize = 16.sp
+        )
+
+        Text(
+            text = venueInfo?.responseData?.result?.season?.name ?: "",
+            color = Color.Gray,
+            fontSize = 14.sp
+        )
+
+        Text(
+            text = venueInfo?.responseData?.result?.startDate?.str ?: "",
+            color = Color.Gray,
+            fontSize = 14.sp
+        )
+
+    }
+}
 
 @Composable
 fun LoadingScreen() {
