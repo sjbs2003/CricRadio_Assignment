@@ -34,8 +34,8 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import org.sj.cricradio.data.model.MiniMatchCardResponse
-import org.sj.cricradio.data.model.VenueInfo
 import org.sj.cricradio.data.model.VenueInfoResponse
+import org.sj.cricradio.data.model.VenueStats
 import org.sj.cricradio.data.model.Weather
 
 
@@ -86,6 +86,9 @@ fun MatchContent(
 
         // Weather Info
         WeatherInfo(venueInfo?.responseData?.result?.weather)
+
+        // Venue Stats
+        VenueStats(venueInfo?.responseData?.result?.venueStats)
     }
 }
 
@@ -324,6 +327,167 @@ fun WeatherInfo(
             )
         }
     }
+}
+
+@Composable
+fun VenueStats(
+    stats: VenueStats?,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = Color(0xFF1E1E1E)
+    ) {
+        Column(
+            modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+        ) {
+            Text(
+                text = "Venue Stats",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = modifier.padding(bottom = 16.dp)
+            )
+
+            // General Stats
+            VenueStatItem("Matches Played", stats?.matchesPlayed?.toString() ?: "0")
+            VenueStatItem("Lowest Defended", stats?.lowestDefended?.toString() ?: "0")
+            VenueStatItem("Highest Chased", stats?.highestChased?.toString() ?: "0")
+            VenueStatItem("Won Bat First", stats?.batFirstWins?.toString() ?: "0")
+            VenueStatItem("Won Ball First", stats?.ballFirstWins?.toString() ?: "0")
+
+            // Batting Stats Header
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "1st Inn",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = modifier.weight(1f)
+                )
+                Text(
+                    text = "2nd Inn",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = modifier.weight(1f),
+                    fontWeight = FontWeight.Normal
+                )
+            }
+
+            // Batting Stats Comparison
+            BattingStatsComparison(
+                label = "Average Score",
+                firstInnings = stats?.battingFirst?.averageScore?.toString() ?: "0",
+                secondInnings = stats?.battingSecond?.averageScore?.toString() ?: "0"
+            )
+            BattingStatsComparison(
+                label = "Highest Score",
+                firstInnings = stats?.battingFirst?.highestScore?.toString() ?: "0",
+                secondInnings = stats?.battingSecond?.highestScore?.toString() ?: "0"
+            )
+            BattingStatsComparison(
+                label = "Lowest Score",
+                firstInnings = stats?.battingFirst?.lowestScore?.toString() ?: "0",
+                secondInnings = stats?.battingSecond?.lowestScore?.toString() ?: "0"
+            )
+            BattingStatsComparison(
+                label = "Pace Wickets",
+                firstInnings = "${stats?.battingFirst?.paceWickets ?: 0} (${calculatePercentage(stats?.battingFirst?.paceWickets, stats?.battingFirst?.paceWickets?.plus(
+                    stats.battingFirst.spinWickets
+                ))}%)",
+                secondInnings = "${stats?.battingSecond?.paceWickets ?: 0} (${calculatePercentage(stats?.battingSecond?.paceWickets, stats?.battingSecond?.paceWickets?.plus(
+                    stats.battingSecond.spinWickets
+                ))}%)"
+            )
+            BattingStatsComparison(
+                label = "Spin Wickets",
+                firstInnings = "${stats?.battingFirst?.spinWickets ?: 0} (${calculatePercentage(stats?.battingFirst?.spinWickets, stats?.battingFirst?.spinWickets?.plus(
+                    stats.battingFirst.paceWickets
+                ))}%)",
+                secondInnings = "${stats?.battingSecond?.spinWickets ?: 0} (${calculatePercentage(stats?.battingSecond?.spinWickets, stats?.battingSecond?.spinWickets?.plus(
+                    stats.battingSecond.paceWickets
+                ))}%)"
+            )
+        }
+    }
+}
+
+@Composable
+fun VenueStatItem(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            color = Color.Gray,
+            fontSize = 14.sp
+        )
+        Text(
+            text = value,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal
+        )
+    }
+}
+
+@Composable
+fun BattingStatsComparison(
+    label: String,
+    firstInnings: String,
+    secondInnings: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            color = Color.Gray,
+            fontSize = 14.sp,
+            modifier = Modifier.weight(1.5f)
+        )
+        Text(
+            text = firstInnings,
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier.weight(1f),
+            fontWeight = FontWeight.Normal
+        )
+        Text(
+            text = secondInnings,
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier.weight(1f),
+            fontWeight = FontWeight.Normal
+        )
+    }
+}
+
+fun calculatePercentage(part: Int?, total: Int?): Int {
+    if (part == null || total == null || total == 0) return 0
+    return ((part.toFloat() / total.toFloat()) * 100).toInt()
 }
 
 @Composable
