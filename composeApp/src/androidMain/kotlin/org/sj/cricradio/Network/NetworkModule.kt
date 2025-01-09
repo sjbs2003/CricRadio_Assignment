@@ -23,7 +23,6 @@ val networkModule = module {
     single { createJson() }
     single { createHttpClient(get()) }
     single { ApiService(get()) }
-    single<MatchRepository> { MatchRepoImpl(get(), get()) }
 }
 
 fun createJson() = Json {

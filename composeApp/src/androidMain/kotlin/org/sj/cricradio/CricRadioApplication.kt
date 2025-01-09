@@ -5,6 +5,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.sj.cricradio.Network.networkModule
+import org.sj.cricradio.data.repository.repositoryModule
 
 class CricRadioApplication: Application() {
 
@@ -14,7 +15,12 @@ class CricRadioApplication: Application() {
         startKoin {
             androidLogger()
             androidContext(this@CricRadioApplication)
-            modules(networkModule)
+            modules(
+                listOf(
+                    networkModule,
+                    repositoryModule
+                )
+            )
         }
     }
 }
