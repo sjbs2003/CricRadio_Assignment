@@ -37,6 +37,9 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
             implementation("io.insert-koin:koin-android:3.5.0")
+
+            // Coil for Image loading
+            implementation("io.coil-kt:coil-compose:2.5.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
