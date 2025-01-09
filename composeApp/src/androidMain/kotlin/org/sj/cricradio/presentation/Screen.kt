@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,7 @@ import coil.request.ImageRequest
 import org.sj.cricradio.data.model.MiniMatchCardResponse
 import org.sj.cricradio.data.model.VenueInfo
 import org.sj.cricradio.data.model.VenueInfoResponse
+import org.sj.cricradio.data.model.Weather
 
 
 @Composable
@@ -81,6 +83,9 @@ fun MatchContent(
 
         //  Match Info
         MatchInfo(venueInfo)
+
+        // Weather Info
+        WeatherInfo(venueInfo?.responseData?.result?.weather)
     }
 }
 
@@ -277,6 +282,47 @@ fun MatchInfo(
             fontSize = 14.sp
         )
 
+    }
+}
+
+@Composable
+fun WeatherInfo(
+    weather: Weather?,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        backgroundColor = Color(0xFF1E1E1E)
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            //TODO("Weather Icon would come here")
+            Column(modifier = modifier.padding(start = 16.dp)) {
+                Text(
+                    text = "${weather?.tempC ?: 0}° C",
+                    color = Color(0xFFFFB300),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = weather?.condition?.text ?: "",
+                    color = Color.Gray,
+                    fontSize = 14.sp
+                )
+            }
+            Spacer(modifier = modifier.weight(1f))
+            Text(
+                text = "Last Updated: ${weather?.lastUpdated ?: ""}",
+                color = Color.Gray,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 
