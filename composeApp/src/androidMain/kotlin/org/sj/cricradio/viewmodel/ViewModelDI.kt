@@ -1,4 +1,4 @@
-package org.sj.cricradio.presentation
+package org.sj.cricradio.viewmodel
 
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.dsl.module

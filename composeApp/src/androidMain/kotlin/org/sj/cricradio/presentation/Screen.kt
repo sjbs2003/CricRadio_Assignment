@@ -42,6 +42,8 @@ import org.sj.cricradio.data.model.MiniMatchCardResponse
 import org.sj.cricradio.data.model.VenueInfoResponse
 import org.sj.cricradio.data.model.VenueStats
 import org.sj.cricradio.data.model.Weather
+import org.sj.cricradio.viewmodel.MatchUiState
+import org.sj.cricradio.viewmodel.MatchViewModel
 
 
 @Composable
@@ -62,7 +64,8 @@ fun MatchScreen(
             MatchContent(
                 miniMatchCard = successState.miniMatchCard,
                 venueInfo = successState.venueInfo,
-                modifier = modifier
+                modifier = modifier,
+                viewModel = viewModel
             )
         }
     }
@@ -72,6 +75,7 @@ fun MatchScreen(
 fun MatchContent(
     miniMatchCard: MiniMatchCardResponse?,
     venueInfo: VenueInfoResponse?,
+    viewModel: MatchViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -100,6 +104,15 @@ fun MatchContent(
 
         // Venue Stats
         VenueStats(venueInfo?.responseData?.result?.venueStats)
+
+        // Web Socket Test
+        val uiState by viewModel.uiState.collectAsState()
+        val successState = (uiState as? MatchUiState.Success)
+        WebSocketTestSection(
+            isConnected = successState?.isWebSocketConnected ?: false,
+            message = successState?.webSocketMessage ?: "",
+            onMessageSend = viewModel::sendWebSocketMessage
+        )
     }
 }
 

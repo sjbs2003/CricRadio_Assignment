@@ -1,4 +1,4 @@
-package org.sj.cricradio.presentation
+package org.sj.cricradio.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -78,7 +78,7 @@ class MatchViewModel(
                 updateWebSocketMessages(true)
                 observeWebSocketMessages()
             }.onFailure { exception ->
-                _uiState.update { currentState ->
+                _uiState.update {
                     MatchUiState.Error("WebSocket connection failed: ${exception.message}")
                 }
             }

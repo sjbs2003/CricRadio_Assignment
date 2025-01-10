@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.sj.cricradio.presentation.MatchScreen
-import org.sj.cricradio.presentation.MatchViewModel
+import org.sj.cricradio.viewmodel.MatchViewModel
 
 @Composable
 @Preview

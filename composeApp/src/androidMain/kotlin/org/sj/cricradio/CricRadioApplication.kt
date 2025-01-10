@@ -6,7 +6,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.sj.cricradio.data.remote.networkModule
 import org.sj.cricradio.data.repository.repositoryModule
-import org.sj.cricradio.presentation.viewmodelModule
+import org.sj.cricradio.viewmodel.viewmodelModule
 
 class CricRadioApplication: Application() {
 
