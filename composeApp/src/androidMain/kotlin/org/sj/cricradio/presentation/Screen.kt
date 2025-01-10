@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
@@ -84,6 +86,12 @@ fun MatchContent(
         //  Match Info
         MatchInfo(venueInfo)
 
+        // Toss Info
+        TossDetails(venueInfo)
+
+        // Umpire Details
+        UmpireDetails(venueInfo)
+
         // Weather Info
         WeatherInfo(venueInfo?.responseData?.result?.weather)
 
@@ -105,73 +113,85 @@ fun MiniScoreCard(
             .fillMaxWidth()
             .padding(16.dp),
         shape = RoundedCornerShape(8.dp),
-        contentColor = Color(0xFF0A1929)
+        backgroundColor = Color(0xFF0A1929)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Team A info
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = miniMatchCard?.responseData?.result?.teams?.a?.shortName ?: "",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
+        Column {
+        //  Main Score Section
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Team A info
+                Box(modifier = Modifier.weight(0.3f)) {
+                    TeamScore(
+                        teamShortName = miniMatchCard?.responseData?.result?.teams?.a?.shortName
+                            ?: "",
+                        isTeamA = true,
+                        currentTeam = currentTeam,
+                        score = if (currentInning == 2 && currentTeam == "a") {
+                            miniMatchCard.responseData.result.teams.a.secondInningsScore
+                        } else {
+                            miniMatchCard?.responseData?.result?.teams?.a?.firstInningsScore
+                        }
                     )
                 }
-                val teamAScore = if (currentInning == 2 && currentTeam == "a") {
-                    miniMatchCard.responseData.result.teams.a.secondInningsScore
-                } else {
-                    miniMatchCard?.responseData?.result?.teams?.a?.firstInningsScore
+
+                // Last Commentary Primary Text
+                Box(
+                    modifier = Modifier.weight(0.4f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = miniMatchCard?.responseData?.result?.lastCommentary?.primaryText ?: "",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
                 }
-                Text(
-                    text = "${teamAScore?.runs ?: 0}/${teamAScore?.wickets ?: 0}",
-                    color = Color(0xFFFFB300),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = teamAScore?.overs ?: "0.0",
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
+
+                // Team B info
+                Box(
+                    modifier = Modifier.weight(0.3f),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    TeamScore(
+                        teamShortName = miniMatchCard?.responseData?.result?.teams?.b?.shortName
+                            ?: "",
+                        isTeamA = false,
+                        currentTeam = currentTeam,
+                        score = if (currentInning == 2 && currentTeam == "b") {
+                            miniMatchCard.responseData.result.teams.b.bSecondInningsScore
+                        } else {
+                            miniMatchCard?.responseData?.result?.teams?.b?.bFirstInningsScore
+                        }
+                    )
+                }
             }
 
-            // Runs needed
-            Text(
-                text = miniMatchCard?.responseData?.result?.now?.sessionLeft ?: "",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
+            Divider(
+                color = Color(0xFF1E3A5F),
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-            // Team B info
-            Column(horizontalAlignment = Alignment.End) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = miniMatchCard?.responseData?.result?.teams?.b?.shortName ?: "",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                val teamBScore = if (currentInning == 2 && currentTeam == "b") {
-                    miniMatchCard.responseData.result.teams.b.bSecondInningsScore
-                } else {
-                    miniMatchCard?.responseData?.result?.teams?.b?.bFirstInningsScore
-                }
+            // Bottom section with CRR and announcement
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = "${teamBScore?.runs ?: 0}/${teamBScore?.wickets ?: 0}",
-                    color = Color(0xFFFFB300),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "CRR: ${miniMatchCard?.responseData?.result?.now?.runRate ?: "0.00"}",
+                    color = Color(0xFF64B5F6),
+                    fontSize = 14.sp
                 )
                 Text(
-                    text = teamBScore?.overs ?: "0.0",
-                    color = Color.Gray,
+                    text = miniMatchCard?.responseData?.result?.announcement1 ?: "",
+                    color = Color(0xFF64B5F6),
                     fontSize = 14.sp
                 )
             }
@@ -289,6 +309,125 @@ fun MatchInfo(
 }
 
 @Composable
+fun TossDetails(
+    venueInfo: VenueInfoResponse?,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = Color(0xFF1E1E1E)
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = venueInfo?.responseData?.result?.toss?.str ?: "",
+                color = Color(0xFFFFB300),
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun UmpireDetails(
+    venueInfo: VenueInfoResponse?,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = Color(0xFF1E1E1E)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Umpires",
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // First Column - Labels
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Umpire",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = "Umpire",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = "Third/TV Umpire",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = "Referee",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+
+                // Second Column - Values
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = venueInfo?.responseData?.result?.firstUmpire ?: "",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = venueInfo?.responseData?.result?.secoundUmpire ?: "",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = venueInfo?.responseData?.result?.thirdUmpire ?: "",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    Text(
+                        text = venueInfo?.responseData?.result?.matchReferee ?: "",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun WeatherInfo(
     weather: Weather?,
     modifier: Modifier = Modifier
@@ -343,8 +482,8 @@ fun VenueStats(
     ) {
         Column(
             modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             Text(
                 text = "Venue Stats",
