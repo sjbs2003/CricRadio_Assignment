@@ -1,19 +1,20 @@
 package org.sj.cricradio.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -27,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
+import org.sj.cricradio.R
 import org.sj.cricradio.data.model.MiniMatchCardResponse
 import org.sj.cricradio.data.model.VenueInfoResponse
 import org.sj.cricradio.data.model.VenueStats
@@ -342,85 +345,109 @@ fun UmpireDetails(
     venueInfo: VenueInfoResponse?,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp),
-        shape = RoundedCornerShape(8.dp),
-        backgroundColor = Color(0xFF1E1E1E)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Umpires",
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+        // Title outside the card
+        Text(
+            text = "Umpires",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            backgroundColor = Color(0xFF1A1A1A)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
             ) {
-                // First Column - Labels
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Umpire",
-                        color = Color.Gray,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                    Text(
-                        text = "Umpire",
-                        color = Color.Gray,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                    Text(
-                        text = "Third/TV Umpire",
-                        color = Color.Gray,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                    Text(
-                        text = "Referee",
-                        color = Color.Gray,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
+                // First row with two umpires
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // First Umpire
+                    Column {
+                        Text(
+                            text = "Umpire",
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = venueInfo?.responseData?.result?.firstUmpire ?: "",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+
+                    // Second Umpire
+                    Column {
+                        Text(
+                            text = "Umpire",
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = venueInfo?.responseData?.result?.secoundUmpire ?: "",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
 
-                // Second Column - Values
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = venueInfo?.responseData?.result?.firstUmpire ?: "",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                    Text(
-                        text = venueInfo?.responseData?.result?.secoundUmpire ?: "",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                    Text(
-                        text = venueInfo?.responseData?.result?.thirdUmpire ?: "",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                    Text(
-                        text = venueInfo?.responseData?.result?.matchReferee ?: "",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
+                // Divider
+                Divider(
+                    color = Color(0xFF2A2A2A),
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                )
+
+                // Second row with Third Umpire and Referee
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Third/TV Umpire
+                    Column {
+                        Text(
+                            text = "Third/TV Umpire",
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = venueInfo?.responseData?.result?.thirdUmpire ?: "",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+
+                    // Referee
+                    Column {
+                        Text(
+                            text = "Referee",
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = venueInfo?.responseData?.result?.matchReferee ?: "",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
         }
@@ -432,38 +459,94 @@ fun WeatherInfo(
     weather: Weather?,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        backgroundColor = Color(0xFF1E1E1E)
+            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Text(
+            text = "Weather",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            backgroundColor = Color(0xFF1A1A1A)
         ) {
-            //TODO("Weather Icon would come here")
-            Column(modifier = modifier.padding(start = 16.dp)) {
-                Text(
-                    text = "${weather?.tempC ?: 0}° C",
-                    color = Color(0xFFFFB300),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Left section with image and location
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.overcast),
+                        contentDescription = "Weather icon",
+                        modifier = Modifier.size(40.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
+                        Text(
+                            text = weather?.location ?: "Geeberha",
+                            color = Color.Gray,
+                            fontSize = 14.sp
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            Text(
+                                text = "${weather?.tempC?.toInt() ?: 20}° C",
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        Text(
+                            text = weather?.condition?.text ?: "Overcast",
+                            color = Color(0xFF2196F3),
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+
+                // Vertical Divider
+                Divider(
+                    color = Color.Yellow,
+                    modifier = Modifier
+                        .width(1.dp)
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp)
                 )
-                Text(
-                    text = weather?.condition?.text ?: "",
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
+
+                // Right section with last updated info
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = "Last Updated",
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = weather?.lastUpdated?.split(" ")?.getOrNull(1) ?: "15:00",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
-            Spacer(modifier = modifier.weight(1f))
-            Text(
-                text = "Last Updated: ${weather?.lastUpdated ?: ""}",
-                color = Color.Gray,
-                fontSize = 12.sp
-            )
         }
     }
 }
@@ -493,169 +576,116 @@ fun VenueStats(
                 modifier = modifier.padding(bottom = 16.dp)
             )
 
-            // General Stats
+            // General Stats with Dividers
             VenueStatItem("Matches Played", stats?.matchesPlayed?.toString() ?: "0")
-            VenueStatItem("Lowest Defended", stats?.lowestDefended?.toString() ?: "0")
-            VenueStatItem("Highest Chased", stats?.highestChased?.toString() ?: "0")
-            VenueStatItem("Won Bat First", stats?.batFirstWins?.toString() ?: "0")
-            VenueStatItem("Won Ball First", stats?.ballFirstWins?.toString() ?: "0")
+            Divider(
+                color = Color(0xFF2A2A2A),
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
 
-            // Batting Stats Header
+            VenueStatItem("Lowest Defended", stats?.lowestDefended?.toString() ?: "0")
+            Divider(
+                color = Color(0xFF2A2A2A),
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            VenueStatItem("Highest Chased", stats?.highestChased?.toString() ?: "0")
+            Divider(
+                color = Color(0xFF2A2A2A),
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            VenueStatItem("Won Bat First", stats?.batFirstWins?.toString() ?: "0")
+            Divider(
+                color = Color(0xFF2A2A2A),
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            VenueStatItem("Won Ball First", stats?.ballFirstWins?.toString() ?: "0")
+            Divider(
+                color = Color(0xFF2A2A2A),
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 12.dp)
+            )
+
+            // Innings Stats Section
             Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "1st Inn",
-                    color = Color.Gray,
-                    fontSize = 14.sp,
-                    modifier = modifier.weight(1f)
+                // First Innings Column
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "1st Inn",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    InningsStatItem("Avg Score", stats?.battingFirst?.averageScore?.toString() ?: "0")
+                    InningsStatItem("Highest Score", stats?.battingFirst?.highestScore?.toString() ?: "0")
+                    InningsStatItem("Lowest Score", stats?.battingFirst?.lowestScore?.toString() ?: "0")
+                    InningsStatItem(
+                        "Pace Wickets",
+                        "${stats?.battingFirst?.paceWickets ?: 0} (${calculatePercentage(
+                            stats?.battingFirst?.paceWickets,
+                            stats?.battingFirst?.paceWickets?.plus(stats.battingFirst.spinWickets)
+                        )}%)"
+                    )
+                    InningsStatItem(
+                        "Spin Wickets",
+                        "${stats?.battingFirst?.spinWickets ?: 0} (${calculatePercentage(
+                            stats?.battingFirst?.spinWickets,
+                            stats?.battingFirst?.spinWickets?.plus(stats.battingFirst.paceWickets)
+                        )}%)"
+                    )
+                }
+
+                // Vertical Divider
+                Divider(
+                    color = Color(0xFF2A2A2A),
+                    modifier = Modifier
+                        .width(1.dp)
+                        .height(150.dp)
+                        .padding(horizontal = 8.dp)
                 )
-                Text(
-                    text = "2nd Inn",
-                    color = Color.Gray,
-                    fontSize = 14.sp,
-                    modifier = modifier.weight(1f),
-                    fontWeight = FontWeight.Normal
-                )
+
+                // Second Innings Column
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "2nd Inn",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    InningsStatItem("Avg Score", stats?.battingSecond?.averageScore?.toString() ?: "0")
+                    InningsStatItem("Highest Score", stats?.battingSecond?.highestScore?.toString() ?: "0")
+                    InningsStatItem("Lowest Score", stats?.battingSecond?.lowestScore?.toString() ?: "0")
+                    InningsStatItem(
+                        "Pace Wickets",
+                        "${stats?.battingSecond?.paceWickets ?: 0} (${calculatePercentage(
+                            stats?.battingSecond?.paceWickets,
+                            stats?.battingSecond?.paceWickets?.plus(stats.battingSecond.spinWickets)
+                        )}%)"
+                    )
+                    InningsStatItem(
+                        "Spin Wickets",
+                        "${stats?.battingSecond?.spinWickets ?: 0} (${calculatePercentage(
+                            stats?.battingSecond?.spinWickets,
+                            stats?.battingSecond?.spinWickets?.plus(stats.battingSecond.paceWickets)
+                        )}%)"
+                    )
+                }
             }
-
-            // Batting Stats Comparison
-            BattingStatsComparison(
-                label = "Average Score",
-                firstInnings = stats?.battingFirst?.averageScore?.toString() ?: "0",
-                secondInnings = stats?.battingSecond?.averageScore?.toString() ?: "0"
-            )
-            BattingStatsComparison(
-                label = "Highest Score",
-                firstInnings = stats?.battingFirst?.highestScore?.toString() ?: "0",
-                secondInnings = stats?.battingSecond?.highestScore?.toString() ?: "0"
-            )
-            BattingStatsComparison(
-                label = "Lowest Score",
-                firstInnings = stats?.battingFirst?.lowestScore?.toString() ?: "0",
-                secondInnings = stats?.battingSecond?.lowestScore?.toString() ?: "0"
-            )
-            BattingStatsComparison(
-                label = "Pace Wickets",
-                firstInnings = "${stats?.battingFirst?.paceWickets ?: 0} (${calculatePercentage(stats?.battingFirst?.paceWickets, stats?.battingFirst?.paceWickets?.plus(
-                    stats.battingFirst.spinWickets
-                ))}%)",
-                secondInnings = "${stats?.battingSecond?.paceWickets ?: 0} (${calculatePercentage(stats?.battingSecond?.paceWickets, stats?.battingSecond?.paceWickets?.plus(
-                    stats.battingSecond.spinWickets
-                ))}%)"
-            )
-            BattingStatsComparison(
-                label = "Spin Wickets",
-                firstInnings = "${stats?.battingFirst?.spinWickets ?: 0} (${calculatePercentage(stats?.battingFirst?.spinWickets, stats?.battingFirst?.spinWickets?.plus(
-                    stats.battingFirst.paceWickets
-                ))}%)",
-                secondInnings = "${stats?.battingSecond?.spinWickets ?: 0} (${calculatePercentage(stats?.battingSecond?.spinWickets, stats?.battingSecond?.spinWickets?.plus(
-                    stats.battingSecond.paceWickets
-                ))}%)"
-            )
-        }
-    }
-}
-
-@Composable
-fun VenueStatItem(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            color = Color.Gray,
-            fontSize = 14.sp
-        )
-        Text(
-            text = value,
-            color = Color.White,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal
-        )
-    }
-}
-
-@Composable
-fun BattingStatsComparison(
-    label: String,
-    firstInnings: String,
-    secondInnings: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            color = Color.Gray,
-            fontSize = 14.sp,
-            modifier = Modifier.weight(1.5f)
-        )
-        Text(
-            text = firstInnings,
-            color = Color.White,
-            fontSize = 14.sp,
-            modifier = Modifier.weight(1f),
-            fontWeight = FontWeight.Normal
-        )
-        Text(
-            text = secondInnings,
-            color = Color.White,
-            fontSize = 14.sp,
-            modifier = Modifier.weight(1f),
-            fontWeight = FontWeight.Normal
-        )
-    }
-}
-
-fun calculatePercentage(part: Int?, total: Int?): Int {
-    if (part == null || total == null || total == 0) return 0
-    return ((part.toFloat() / total.toFloat()) * 100).toInt()
-}
-
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-fun ErrorScreen(
-    message: String,
-    onRetry: () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = message,
-            color = Color.Red,
-            modifier = Modifier.padding(16.dp)
-        )
-        Button(onClick = onRetry) {
-            Text("Retry")
         }
     }
 }
