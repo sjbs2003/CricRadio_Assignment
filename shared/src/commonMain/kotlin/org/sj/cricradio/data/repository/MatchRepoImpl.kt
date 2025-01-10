@@ -2,6 +2,9 @@ package org.sj.cricradio.data.repository
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.webSocketSession
+import io.ktor.client.request.header
+import io.ktor.client.request.url
+import io.ktor.util.generateNonce
 import io.ktor.websocket.Frame
 import io.ktor.websocket.WebSocketSession
 import io.ktor.websocket.close
@@ -40,10 +43,23 @@ class MatchRepoImpl(
 
     override suspend fun connectToWebSocket(): Result<Unit> {
         return try {
-            webSocketSession = client.webSocketSession("wss://ws.postmanecho.com/raw")
+            println("Attempting to connect to WebSocket...")
+            webSocketSession = client.webSocketSession {
+                url("wss://ws.postmanecho.com/raw")
+
+                // Essential WebSocket headers
+                header("Connection", "Upgrade")
+                header("Upgrade", "websocket")
+                header("Sec-WebSocket-Version", "13")
+                header("Sec-WebSocket-Key", generateNonce())
+            }
+
+            println("WebSocket connection established")
             startListening()
             Result.success(Unit)
         } catch (e: Exception) {
+            println("WebSocket connection failed: ${e.message}")
+            e.printStackTrace() // Add this to get full stack trace
             Result.failure(e)
         }
     }
@@ -64,18 +80,21 @@ class MatchRepoImpl(
     private suspend fun startListening() {
         try {
             val session = webSocketSession ?: return
+            println("Starting to listen for WebSocket messages")
             session.incoming
                 .consumeAsFlow()
                 .collect { frame ->
                     when (frame) {
                         is Frame.Text -> {
-                            messageChannel.send(frame.readText())
+                            val text = frame.readText()
+                            println("Received WebSocket message: $text")
+                            messageChannel.send(text)
                         }
-                        // Handle other frame types if needed
-                        else -> { /* Ignore other frame types */ }
+                        else -> println("Received non-text frame: $frame")
                     }
                 }
         } catch (e: Exception) {
+            println("Error in WebSocket listener: ${e.message}")
             messageChannel.close(e)
         }
     }

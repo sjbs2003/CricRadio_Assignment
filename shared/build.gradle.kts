@@ -51,7 +51,6 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
         }
         androidMain.dependencies {
-            implementation("io.ktor:ktor-client-android:2.3.7")
             implementation("io.insert-koin:koin-android:3.5.0")
         }
     }
