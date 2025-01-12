@@ -43,23 +43,12 @@ class MatchRepoImpl(
 
     override suspend fun connectToWebSocket(): Result<Unit> {
         return try {
-            println("Attempting to connect to WebSocket...")
             webSocketSession = client.webSocketSession {
-                url("wss://ws.postmanecho.com/raw")
-
-                // Essential WebSocket headers
-                header("Connection", "Upgrade")
-                header("Upgrade", "websocket")
-                header("Sec-WebSocket-Version", "13")
-                header("Sec-WebSocket-Key", generateNonce())
+                url("wss://ws.postman-echo.com/raw")
             }
-
-            println("WebSocket connection established")
             startListening()
             Result.success(Unit)
         } catch (e: Exception) {
-            println("WebSocket connection failed: ${e.message}")
-            e.printStackTrace() // Add this to get full stack trace
             Result.failure(e)
         }
     }
@@ -80,21 +69,18 @@ class MatchRepoImpl(
     private suspend fun startListening() {
         try {
             val session = webSocketSession ?: return
-            println("Starting to listen for WebSocket messages")
             session.incoming
                 .consumeAsFlow()
                 .collect { frame ->
                     when (frame) {
                         is Frame.Text -> {
                             val text = frame.readText()
-                            println("Received WebSocket message: $text")
                             messageChannel.send(text)
                         }
                         else -> println("Received non-text frame: $frame")
                     }
                 }
         } catch (e: Exception) {
-            println("Error in WebSocket listener: ${e.message}")
             messageChannel.close(e)
         }
     }

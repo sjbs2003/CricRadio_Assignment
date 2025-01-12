@@ -75,28 +75,18 @@ class MatchViewModel(
 
     private fun setupWebSocket() {
         viewModelScope.launch {
-            var retryCount = 0
-            val maxRetries = 3
-
-            while (retryCount < maxRetries) {
-                repository.connectToWebSocket().onSuccess {
-                    println("WebSocket connected successfully")
-                    updateWebSocketMessages(true)
-                    observeWebSocketMessages()
-                    return@launch
-                }.onFailure { exception ->
-                    println("WebSocket connection attempt ${retryCount + 1} failed: ${exception.message}")
-                    retryCount++
-                    if (retryCount >= maxRetries) {
-                        _uiState.update {
-                            MatchUiState.Error("WebSocket connection failed after $maxRetries attempts: ${exception.message}")
-                        }
-                    }
-                    delay(2000) // Wait 2 seconds before retrying
+            repository.connectToWebSocket().onSuccess {
+                updateWebSocketMessages(true)
+                observeWebSocketMessages()
+                return@launch
+            }.onFailure { exception ->
+                _uiState.update {
+                    MatchUiState.Error(exception.message ?: "")
                 }
             }
         }
     }
+
 
     private fun updateWebSocketMessages(isConnected: Boolean) {
         _uiState.update { currentState ->
